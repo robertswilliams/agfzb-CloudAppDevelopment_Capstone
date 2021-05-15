@@ -9,7 +9,7 @@ env:
   IBM_CLOUD_SPACE: dev
   IBM_CLOUD_ORG:
   MANIFEST_NAME: manifest.yml
-  IBM_CLOUD_API: ${{secrets.IBM_CLOUD_API_KEY}}
+  IBM_CLOUD_API: ${{secrets.IBM_CLOUD_API_KEY_SECRET}}
 
 defaults:
   run:
