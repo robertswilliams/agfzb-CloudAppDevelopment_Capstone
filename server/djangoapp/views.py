@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 # from .models import related models
 # from .restapis import related methods
-from .restapis import get_dealers_from_cf
+from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -80,7 +80,7 @@ def registration_request(request):
 def get_dealerships(request):
     if request.method == "GET":
         #url = "your-cloud-function-domain/dealerships/dealer-get"
-        url = "https://50e8cf6a.us-south.apigw.appdomain.cloud/api/dealerships/"
+        url = "https://50e8cf6a.us-south.apigw.appdomain.cloud/api/dealership/dealer-get"
         # Get dealers from the URL
         dealerships = get_dealers_from_cf(url)
         # Concat all dealer's short name
@@ -89,8 +89,15 @@ def get_dealerships(request):
         return HttpResponse(dealer_names)
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
-# def get_dealer_details(request, dealer_id):
-# ...
+def get_dealer_details(request, dealer_id):
+    if request.method == "GET":
+        url = "https://50e8cf6a.us-south.apigw.appdomain.cloud/api/review/review-get"
+        # Get reviews from the URL
+        reviews = get_dealer_reviews_from_cf(url, dealerId=dealer_id)
+        # Concat all dealer's short name
+        review_details = ' '.join([review.review for review in reviews])
+        # Return a list of reviews
+        return HttpResponse(review_details)
 
 # Create a `add_review` view to submit a review
 # def add_review(request, dealer_id):
