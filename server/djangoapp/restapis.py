@@ -18,6 +18,7 @@ def get_request(url, **kwargs):
         params["text"] = kwargs["text"]
         params["version"] = kwargs["version"]
         params["features"] = kwargs["features"]
+        params["language"] = kwargs["language"]
         params["return_analyzed_text"] = kwargs["return_analyzed_text"]
  
     header={'Content-Type': 'application/json'}
@@ -110,17 +111,24 @@ def analyze_review_sentiments(text):
     params = dict()
     params["api_key"] = 'mdmtKlDZfzMi7E3NHWK-ZDQydsDm4WEAdPqLTnYZrKk7'
     params["text"] = text
-    params["version"] = '2018-03-16'
-    params["features"] = {'sentiment': {'document': True}}
+    params["version"] = '2021-03-25'
+    params["features"] = ['sentiment']
+    params["language"] = 'en'
     params["return_analyzed_text"] = False
 
-    #url = 'https://gateway.watsonplatform.net/natural-language-understanding/api'
-    url = 'https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/5b5bbb52-07ca-4b4e-930a-c8e6f8ecd5ee'
+    url = 'https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/5b5bbb52-07ca-4b4e-930a-c8e6f8ecd5ee//v1/analyze'
     json_result = get_request(url, **params)
 
-    print(json_result)
-
-    return 'foo'
+    result = 'indeterminate'
+    if json_result:
+        print("results: ")
+        print(json_result)
+        sentiment = json_result["sentiment"]
+        print("sentiment: ")
+        print(sentiment)
+        result = sentiment["document"]["label"]
+ 
+    return result
 
 
 
