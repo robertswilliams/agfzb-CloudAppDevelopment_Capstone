@@ -94,6 +94,8 @@ def get_dealer_reviews_from_cf(url, **kwargs):
     if json_result:
         print("results: ")
         print(json_result)
+        if not 'action-result' in json_result:
+            return results
         # Get the row list in JSON as dealers
         reviews = json_result["action-result"]
         # For each dealer object
@@ -104,9 +106,15 @@ def get_dealer_reviews_from_cf(url, **kwargs):
             model = review["car_model"] if purchase else None
             year = review["car_year"] if purchase else None
             purchase_date = review["purchase_date"] if purchase else None
+            # pull year out of purchase date, so it can be displayed properly
+            if purchase_date:
+                purchase_date_list = purchase_date.split('/')
+                if len(purchase_date_list) >= 3:
+                    purchase_date = purchase_date_list[2]
             sentiment = analyze_review_sentiments(review["review"])
             dealer_obj = DealerReview(dealership=review["dealership"], name=review["name"], purchase=purchase,
-                                   review=review["review"], id=review["id"],
+                                   review=review["review"],
+                                   id=review["id"],
                                    sentiment=sentiment,
                                    purchase_date=purchase_date,
                                    car_make=make,
