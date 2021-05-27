@@ -95,11 +95,13 @@ def get_dealer_details(request, dealer_id):
         # Get reviews from the URL
         reviews = get_dealer_reviews_from_cf(url, dealerId=dealer_id)
         context['review_list'] = reviews
+        context['dealer_id'] = dealer_id
 
         return render(request, 'djangoapp/dealer_details.html', context)
 
 # Create a `add_review` view to submit a review
 def add_review(request, dealer_id):
+    context = {}
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['psw']
@@ -121,8 +123,14 @@ def add_review(request, dealer_id):
             json_payload = {"review" : review}
 
             result = post_request(url, json_payload, dealerId=dealer_id)
+            context['dealer_id'] = dealer_id
+
             return HttpResponse(str(result))
-        else:
-            context['message'] = "Invalid username or password."
-            return render(request, 'djangoapp/index.html', context)
+        #else:
+        #    context['dealer_id'] = dealer_id
+        #    return render(request, 'djangoapp/add_review.html', context)
+    elif request.method == "GET":
+        context['dealer_id'] = dealer_id
+        return render(request, 'djangoapp/add_review.html', context)
+
 
