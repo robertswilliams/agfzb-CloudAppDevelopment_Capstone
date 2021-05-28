@@ -126,9 +126,9 @@ def add_review(request, dealer_id):
             context['dealer_id'] = dealer_id
 
             return HttpResponse(str(result))
-        #else:
-        #    context['dealer_id'] = dealer_id
-        #    return render(request, 'djangoapp/add_review.html', context)
+        else:
+            context['message'] = "Invalid username or password."
+            return render(request, 'djangoapp/index.html', context)
     elif request.method == "GET":
         context['dealer_id'] = dealer_id
         return render(request, 'djangoapp/add_review.html', context)
