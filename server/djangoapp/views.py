@@ -10,6 +10,7 @@ from django.contrib import messages
 from datetime import datetime
 import logging
 import json
+import uuid
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -108,20 +109,70 @@ def add_review(request, dealer_id):
         # I need to redo this, since it doesn't
         # reflect what's actually in request.POST.
         # See notes.
-        review["time"] = datetime.utcnow().isoformat()
+
+        print('returned from template: ')
+        print(request.POST)
+        print('')
+
+        review_time = datetime.utcnow().isoformat()
+        review_content = request.POST['content']
+        id = uuid.uuid4()
+        name = '? (user name?)'
+        purchased = 'purchasecheck' in request.POST
+        date_purchased = None
+        car_make = None
+        car_model = None
+        car_year = None
+        if purchased:
+            date_purchased = request.POST['purchasedate']
+
+            print('car index: ', request.POST['car'])
+
+            cars = CarModel.objects.all()
+            # I'm not sure why but all car models
+            # are offset by 2 from the first model
+            # in the list
+            base = 2 
+            print('cars: ', cars)
+            car = cars[int(request.POST['car']) - base]
+            car_make = car.make
+            car_model = car.name
+            car_year = car.year.strftime("%Y")
+
+        print('time: ', review_time)
+        print('dealership: ', dealer_id)
+        print('review: ', review_content)
+        print('make: ', car_make)
+        print('model: ', car_model)
+        print('year: ', car_year)
+        print('id: ', id)
+        print('name: ', name)
+        print('purchased: ', purchased)
+        print('purchase_date: ', date_purchased)
+
+        review["time"] = review_time
         review["dealership"] = dealer_id
-        review["review"] = request.POST['review']
-        review["car_make"] = request.POST['car_make']
-        review["car_model"] = request.POST['car_model']
-        review["car_year"] = request.POST['car_year']
-        review["id"] = request.POST['id']
-        review["name"] = request.POST['name']
-        review["purchase"] = request.POST['purchase']
-        review["purchase_date"] = request.POST['purchase_date']
+        review["review"] = review_content
+        review["car_make"] = car_make
+        review["car_model"] = car_model
+        review["car_year"] = car_year
+        review["id"] = id
+        review["name"] = name
+        review["purchase"] = purchased
+        review["purchase_date"] = date_purchased
         
+        ########################################
+        # Hacked breakpoint so that I don't try
+        # to post a review before I'm ready
+        print('BREAKPOINT')
+        breakpoint = []
+        print(breakpoint[1])
+        print('should not reach this!')
+        ########################################
+
         json_payload = {"review" : review}
 
-        result = post_request(url, json_payload, dealerId=dealer_id)
+        #result = post_request(url, json_payload, dealerId=dealer_id)
 
         return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
     elif request.method == "GET":

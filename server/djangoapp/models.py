@@ -13,7 +13,7 @@ class CarMake(models.Model):
     description = models.TextField()
 
     def __str__(self):
-        return "Make: " + self.name
+        return self.name
 
 
 # <HINT> Create a Car Model model `class CarModel(models.Model):`:
