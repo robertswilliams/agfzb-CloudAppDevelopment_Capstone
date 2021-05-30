@@ -110,14 +110,21 @@ def add_review(request, dealer_id):
         # reflect what's actually in request.POST.
         # See notes.
 
-        print('returned from template: ')
+        print('add_review (POST): ')
         print(request.POST)
         print('')
+
+        # I need a username
+        username = request.POST['username']
+        user = User.objects.get(username=username)
 
         review_time = datetime.utcnow().isoformat()
         review_content = request.POST['content']
         id = uuid.uuid4()
-        name = '? (user name?)'
+        name = username
+        if user.first_name:
+            lastname = ' ' + user.last_name if user.last_name else ''
+            name = user.first_name + lastname            
         purchased = 'purchasecheck' in request.POST
         date_purchased = None
         car_make = None

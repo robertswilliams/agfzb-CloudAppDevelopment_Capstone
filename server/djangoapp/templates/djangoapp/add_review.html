@@ -24,6 +24,8 @@
             <h3>Add a review about <b>{{dealer_name}}</b></h3>
             <hr>
             <div class="form-group"> <!--Style second div with .form-group class -->
+                <input type="hidden" name="username" value="{{user.username}}">
+
                 <label for="content"><b>Enter the review content:</b></label>
                 <textarea class="form-control" id="content" name="content" rows="2" required>
 
