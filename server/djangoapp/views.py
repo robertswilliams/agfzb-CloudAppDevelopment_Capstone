@@ -114,13 +114,18 @@ def add_review(request, dealer_id):
         print(request.POST)
         print('')
 
-        # I need a username
         username = request.POST['username']
-        user = User.objects.get(username=username)
+        try:
+            user = User.objects.get(username=username)
+        except:
+            # If there's no user, return to the review page
+            print('whoops!')
+            return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
+
 
         review_time = datetime.utcnow().isoformat()
         review_content = request.POST['content']
-        id = uuid.uuid4()
+        id = uuid.uuid4().int
         name = username
         if user.first_name:
             lastname = ' ' + user.last_name if user.last_name else ''
@@ -142,7 +147,7 @@ def add_review(request, dealer_id):
             base = 2 
             print('cars: ', cars)
             car = cars[int(request.POST['car']) - base]
-            car_make = car.make
+            car_make = car.make.name
             car_model = car.name
             car_year = car.year.strftime("%Y")
 
@@ -171,15 +176,15 @@ def add_review(request, dealer_id):
         ########################################
         # Hacked breakpoint so that I don't try
         # to post a review before I'm ready
-        print('BREAKPOINT')
-        breakpoint = []
-        print(breakpoint[1])
-        print('should not reach this!')
+        #print('BREAKPOINT')
+        #breakpoint = []
+        #print(breakpoint[1])
+        #print('should not reach this!')
         ########################################
 
         json_payload = {"review" : review}
 
-        #result = post_request(url, json_payload, dealerId=dealer_id)
+        result = post_request(url, json_payload, dealerId=dealer_id)
 
         return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
     elif request.method == "GET":
